@@ -1,1 +1,234 @@
-# free-fire-panel-admin
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Panel Bajar - Admin Panel</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0614;--card:#14102a;--card2:#1e1740;--border:#2d2150;--primary:#ec4899;--accent:#7c3aed;--text:#f5f3ff;--muted:#a89cc9;--green:#10b981;--amber:#f59e0b;--red:#ef4444;--bkash:#e2136e}
+body{font-family:-apple-system,'Segoe UI','Hind Siliguri',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+button{cursor:pointer;border:none;font-family:inherit;color:inherit;background:none}
+input,select,textarea{background:#0f0a1a;border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 13px;width:100%;font-family:inherit;font-size:14px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary)}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#3d2d6b;border-radius:3px}
+header{position:sticky;top:0;z-index:40;background:rgba(10,6,20,.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(45,33,80,.5)}
+.header-in{padding:0 16px;height:58px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-badge{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:15px}
+.logo-name{font-weight:800;font-size:15px}
+.live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:5px;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.btn-header{padding:7px 14px;border-radius:9px;font-size:12px;font-weight:700;background:var(--card2);border:1px solid var(--border)}
+.layout{display:flex;min-height:calc(100vh - 58px)}
+aside{width:250px;flex-shrink:0;background:var(--card);border-right:1px solid var(--border);padding:14px;position:sticky;top:58px;height:calc(100vh - 58px);overflow-y:auto}
+.side-btn{width:100%;text-align:left;padding:11px 13px;border-radius:10px;font-size:14px;display:flex;align-items:center;gap:9px;margin-bottom:3px;font-weight:600;transition:.2s}
+.side-btn:hover{background:rgba(255,255,255,.05)}
+.side-btn.active{background:linear-gradient(135deg,var(--primary),#db2777);color:#fff;box-shadow:0 4px 12px rgba(236,72,153,.3)}
+.side-divider{height:1px;background:var(--border);margin:10px 0}
+.side-btn.danger{color:var(--red)}
+.side-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:800;padding:1px 7px;border-radius:999px;min-width:18px;text-align:center}
+.side-btn.active .side-badge{background:rgba(255,255,255,.3)}
+main{flex:1;padding:18px;overflow-y:auto;max-width:900px}
+.page-title{font-size:21px;font-weight:800;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;letter-spacing:-.3px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px}
+.btn-primary{background:linear-gradient(135deg,var(--primary),#db2777);color:#fff;font-weight:700;transition:.2s;box-shadow:0 4px 12px rgba(236,72,153,.3)}
+.btn-primary:hover{transform:translateY(-1px)}
+.btn-sm{padding:7px 13px;border-radius:9px;font-size:13px;font-weight:700}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:13px;margin-bottom:18px}
+.stat{padding:18px}.stat-icon{font-size:24px;margin-bottom:8px}
+.stat-val{font-size:24px;font-weight:800;letter-spacing:-.5px}
+.stat-label{font-size:10px;text-transform:uppercase;color:var(--muted);font-weight:700;letter-spacing:.5px;margin-top:3px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:768px){.two-col{grid-template-columns:1fr}aside{position:fixed;left:-270px;z-index:50;transition:.3s;box-shadow:0 0 30px rgba(0,0,0,.3)}aside.show{left:0}.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:40}aside.show~.overlay{display:block}}
+.list-item{display:flex;align-items:flex-start;gap:12px;padding:14px;margin-bottom:10px;transition:.2s}
+.list-item:hover{border-color:rgba(236,72,153,.3)}
+.list-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:21px;background:var(--card2);flex-shrink:0;overflow:hidden}
+.list-icon img{width:100%;height:100%;object-fit:cover}
+.list-body{flex:1;min-width:0}
+.list-title{font-weight:700;font-size:14px}
+.list-sub{font-size:11px;color:var(--muted)}
+.list-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:3px}
+.badge{font-size:10px;padding:3px 9px;border-radius:999px;font-weight:700}
+.badge-green{background:rgba(16,185,129,.2);color:var(--green)}
+.badge-amber{background:rgba(245,158,11,.2);color:var(--amber)}
+.badge-red{background:rgba(239,68,68,.2);color:var(--red)}
+.badge-pri{background:rgba(236,72,153,.2);color:var(--primary)}
+.badge-muted{background:var(--card2);color:var(--muted)}
+.btn-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;background:var(--card2);transition:.2s}
+.btn-icon:hover{background:var(--border)}
+.btn-icon-danger{background:rgba(239,68,68,.2);color:var(--red)}
+.actions{display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap}
+.modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);padding:16px}
+.modal.show{display:flex}
+.modal-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.modal-title{font-size:18px;font-weight:800;margin-bottom:16px;letter-spacing:-.3px}
+.field{margin-bottom:13px}
+.field label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px;font-weight:600}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.btn-full{width:100%;padding:11px;border-radius:11px;font-weight:700;font-size:14px}
+.switch{width:42px;height:23px;background:var(--border);border-radius:12px;position:relative;cursor:pointer;transition:.2s;flex-shrink:0}
+.switch.on{background:var(--primary)}
+.switch::after{content:'';position:absolute;top:2px;left:2px;width:19px;height:19px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+.switch.on::after{transform:translateX(19px)}
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.toast{position:fixed;top:18px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border);padding:13px 22px;border-radius:12px;z-index:100;animation:slideDown .3s;font-weight:600;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+@keyframes slideDown{from{opacity:0;transform:translate(-50%,-20px)}to{opacity:1;transform:translate(-50%,0)}}
+.section-card{padding:18px;margin-bottom:14px}
+.section-title{font-size:14px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px;letter-spacing:-.2px}
+.info-box{padding:12px 14px;border-radius:10px;font-size:12px;background:var(--card2);border:1px solid var(--border);line-height:1.6;color:var(--muted)}
+.info-box code{color:var(--primary);font-family:monospace;background:rgba(236,72,153,.1);padding:1px 6px;border-radius:4px}
+.hamburger{display:none;font-size:24px}
+@media(max-width:768px){.hamburger{display:block}}
+.fb-status{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700}
+.fb-ok{background:rgba(16,185,129,.2);color:var(--green)}
+.fb-no{background:rgba(245,158,11,.2);color:var(--amber)}
+.order-code-box{margin-top:8px;font-family:monospace;font-size:13px;padding:10px 12px;border-radius:8px;display:inline-block;background:rgba(16,185,129,.1);color:var(--green);border:1px solid rgba(16,185,129,.25);word-break:break-all}
+.plan-edit-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:6px;margin-bottom:6px;align-items:end}
+.plan-edit-row input{padding:8px 10px;font-size:12px}
+.btn-add-plan{padding:8px 12px;border-radius:8px;font-size:12px;font-weight:700;background:var(--card2);color:var(--text);border:1px dashed var(--border);width:100%}
+.preview-img{width:100%;max-height:150px;object-fit:cover;border-radius:10px;margin-top:6px;border:1px solid var(--border)}
+</style>
+</head>
+<body>
+<header><div class="header-in"><div class="logo"><button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('show')">☰</button><div class="logo-badge">PB</div><span class="logo-name">Admin Panel</span><span style="font-size:11px;color:var(--green);font-weight:700;margin-left:4px"><span class="live-dot"></span>LIVE</span></div><div style="display:flex;gap:8px"><button class="btn-header" onclick="exportData()">📥 Backup</button></div></div></header>
+<div class="layout">
+<aside id="sidebar">
+<button class="side-btn active" data-tab="dashboard" onclick="setTab('dashboard')">📊 Dashboard</button>
+<button class="side-btn" data-tab="orders" onclick="setTab('orders')">🛒 Orders <span class="side-badge" id="pendingBadge" style="display:none">0</span></button>
+<button class="side-btn" data-tab="products" onclick="setTab('products')">📦 Products</button>
+<button class="side-btn" data-tab="users" onclick="setTab('users')">👥 Users</button>
+<div class="side-divider"></div>
+<button class="side-btn" data-tab="settings" onclick="setTab('settings')">⚙️ Settings (URL চেঞ্জ)</button>
+<button class="side-btn" data-tab="integrations" onclick="setTab('integrations')">🔌 Integrations</button>
+<div class="side-divider"></div>
+<button class="side-btn danger" onclick="resetAll()">🗑️ সব রিসেট</button>
+</aside>
+<div class="overlay" onclick="document.getElementById('sidebar').classList.remove('show')"></div>
+<main id="main"></main>
+</div>
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()"><div class="modal-card" id="modalContent"></div></div>
+<script>
+/* ============ FIREBASE SDK ============ */
+let fbApp=null,fbDb=null,fbAuth=null,fbConnected=false;
+function initFirebase(){
+  const s=state.settings;
+  if(!s.fb_api_key||!s.fb_project_id||!s.fb_app_id){return false}
+  try{
+    if(typeof firebase==='undefined'){return false}
+    const config={apiKey:s.fb_api_key,authDomain:s.fb_auth_domain,projectId:s.fb_project_id,databaseURL:s.fb_database_url,storageBucket:s.fb_storage_bucket,messagingSenderId:s.fb_messaging_sender_id,appId:s.fb_app_id};
+    if(!firebase.apps.length){fbApp=firebase.initializeApp(config)}else{fbApp=firebase.app()}
+    fbDb=firebase.firestore();
+    fbAuth=firebase.auth();
+    fbConnected=true;
+    console.log('✅ Firebase connected');
+    return true;
+  }catch(e){console.warn('Firebase init error:',e);return false}
+}
+function fbSync(collection,data){
+  if(!fbConnected||!fbDb)return;
+  try{fbDb.collection(collection).doc('main').set({data:JSON.stringify(data),updatedAt:new Date().toISOString()}).catch(e=>console.warn('FB sync err:',e))}catch(e){}
+}
+function fbLoad(collection,callback){
+  if(!fbConnected||!fbDb){callback&&callback(null);return}
+  try{fbDb.collection(collection).doc('main').get().then(doc=>{if(doc.exists){const data=JSON.parse(doc.data().data||'[]');callback&&callback(data)}else{callback&&callback(null)}}).catch(e=>{console.warn('FB load err:',e);callback&&callback(null)})}catch(e){callback&&callback(null)}
+}
+function fbListen(collection,callback){
+  if(!fbConnected||!fbDb){return}
+  try{fbDb.collection(collection).doc('main').onSnapshot(doc=>{if(doc.exists){try{const data=JSON.parse(doc.data().data||'[]');callback&&callback(data)}catch(e){}}})}catch(e){}
+}
+</script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script>
+let state={users:JSON.parse(localStorage.getItem('pb_users')||'[]'),products:JSON.parse(localStorage.getItem('pb_products')||'[]'),orders:JSON.parse(localStorage.getItem('pb_orders')||'[]'),settings:JSON.parse(localStorage.getItem('pb_settings')||JSON.stringify({site_name:'Panel Bajar',tagline:'Buy Premium Mods & Hacks',notification:'স্বাগতম Panel Bajar-এ!',notif_active:true,telegram:'https://t.me/panelbajar',youtube:'https://youtube.com/@panelbajar',bkash_number:'01XXXXXXXXX',help_url:'https://t.me/panelbajar',tg_bot_token:'',tg_chat_id:'',fb_api_key:'',fb_auth_domain:'',fb_project_id:'',fb_database_url:'',fb_storage_bucket:'',fb_messaging_sender_id:'',fb_app_id:''})),tab:'dashboard'};
+function save(){['users','products','orders','settings'].forEach(k=>localStorage.setItem('pb_'+k,JSON.stringify(state[k])));fbSync('products',state.products);fbSync('orders',state.orders);fbSync('users',state.users);fbSync('settings',[state.settings])}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function $(id){return document.getElementById(id)}
+function val(id){return $(id).value}
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),3000)}
+function fmt(n){return '৳'+Number(n).toFixed(0)}
+function tAgo(d){return new Date(d).toLocaleString('bn-BD')}
+function copyText(text){try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(()=>toast('কপি হয়েছে')).catch(()=>fallbackCopy(text))}else{fallbackCopy(text)}}catch(e){fallbackCopy(text)}}
+function fallbackCopy(text){const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('কপি হয়েছে')}catch(e){toast('কপি করতে সমস্যা')}document.body.removeChild(ta)}
+function sendTelegram(msg){const s=state.settings;if(!s.tg_bot_token||!s.tg_chat_id)return;try{fetch('https://api.telegram.org/bot'+s.tg_bot_token+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:s.tg_chat_id,text:msg,parse_mode:'HTML'})}).catch(()=>{})}catch(e){}}
+function setTab(t){state.tab=t;document.getElementById('sidebar').classList.remove('show');render()}
+function openModal(html){$('modalContent').innerHTML=html;$('modal').classList.add('show')}
+function closeModal(){$('modal').classList.remove('show')}
+function updateBadge(){const po=state.orders.filter(o=>o.status==='PENDING').length;const b=$('pendingBadge');if(po>0){b.textContent=po;b.style.display='inline-block'}else b.style.display='none'}
+function render(){document.querySelectorAll('.side-btn[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===state.tab));updateBadge();const m=$('main');if(state.tab==='dashboard')m.innerHTML=adminDashboard();else if(state.tab==='products')m.innerHTML=adminProducts();else if(state.tab==='orders')m.innerHTML=adminOrders();else if(state.tab==='users')m.innerHTML=adminUsers();else if(state.tab==='settings')m.innerHTML=adminSettings();else if(state.tab==='integrations')m.innerHTML=adminIntegrations()}
+
+function adminDashboard(){const revenue=state.orders.filter(o=>o.status==='COMPLETED').reduce((s,o)=>s+o.price,0);const pending=state.orders.filter(o=>o.status==='PENDING').length;const cards=[{l:'Total Users',v:state.users.length,c:'#26a5e4',i:'👥'},{l:'Total Products',v:state.products.length,c:'var(--green)',i:'📦'},{l:'Total Orders',v:state.orders.length,c:'var(--primary)',i:'🛒'},{l:'Revenue',v:fmt(revenue),c:'var(--green)',i:'💰'},{l:'Pending Orders',v:pending,c:'var(--amber)',i:'⏰'}];return `<div class="page-title"><span>📊 Dashboard</span></div><div class="stat-grid">${cards.map(c=>`<div class="card stat"><div class="stat-icon">${c.i}</div><div class="stat-val" style="color:${c.c}">${c.v}</div><div class="stat-label">${c.l}</div></div>`).join('')}</div><div class="card" style="padding:16px"><div class="section-title">🛒 সাম্প্রতিক অর্ডার</div>${state.orders.length===0?'<p style="font-size:12px;text-align:center;padding:16px;color:var(--muted)">কোনো অর্ডার নেই</p>':state.orders.slice(-10).reverse().map(o=>{const p=state.products.find(x=>x.id===o.productId);const u=state.users.find(x=>x.id===o.userId);return `<div style="display:flex;justify-content:space-between;font-size:12px;padding:7px 0;border-bottom:1px solid var(--border)"><div><div style="font-weight:600">${p?.name||'—'}</div><div class="list-sub">${u?.username||'—'} • Txn: ${o.txnId||'—'}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px"><div style="font-weight:700;color:var(--primary)">${fmt(o.price)}</div><span class="badge ${o.status==='COMPLETED'?'badge-green':o.status==='PENDING'?'badge-amber':'badge-red'}">${o.status}</span></div></div>`}).join('')}</div>`}
+
+function adminProducts(){return `<div class="page-title"><span>Products (${state.products.length})</span><button class="btn-primary btn-sm" onclick="productForm()">+ নতুন</button></div>${state.products.length===0?'<div class="card empty">কোনো প্রোডাক্ট নেই</div>':state.products.map(p=>{const orders=state.orders.filter(o=>o.productId===p.id).length;return `<div class="card list-item"><div class="list-icon">${p.image?`<img src="${p.image}" onerror="this.style.display='none';this.parentElement.textContent='${p.icon||'🎮'}'">`:p.icon||'🎮'}</div><div class="list-body"><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span class="list-title">${p.name}</span><span class="badge ${p.category==='ROOT'?'badge-red':'badge-green'}">${p.category}</span><span class="badge ${p.status==='ACTIVE'?'badge-green':'badge-muted'}">${p.status}</span>${p.antiban?'<span class="badge badge-green">ANTI BAN</span>':''}${p.maintenance?'<span class="badge badge-amber">MAINTENANCE</span>':''}</div><div class="list-row"><span>অর্ডার: ${orders}</span><span>Plans: ${p.plans?.length||0}</span>${p.image?'<span style="color:var(--green)">📷 Image</span>':'<span style="color:var(--red)">No Image</span>'}</div></div><div class="actions"><button class="btn-icon" onclick="productForm('${p.id}')">✏️</button><button class="btn-icon btn-icon-danger" onclick="delProduct('${p.id}')">🗑️</button></div></div>`}).join('')}`}
+
+function productForm(id){
+  const p=id?state.products.find(x=>x.id===id):null;
+  const plans=p?.plans||[{dur:'1 Day',price:0,stock:99}];
+  const plansHtml=plans.map((pl,i)=>`<div class="plan-edit-row" data-plan="${i}"><div><label style="font-size:10px">Duration</label><input value="${pl.dur}" onchange="updatePlan(${i},'dur',this.value)" placeholder="1 Day" /></div><div><label style="font-size:10px">Price (৳)</label><input type="number" value="${pl.price}" onchange="updatePlan(${i},'price',this.value)" /></div><div><label style="font-size:10px">Stock</label><input type="number" value="${pl.stock}" onchange="updatePlan(${i},'stock',this.value)" /></div><button class="btn-icon btn-icon-danger" onclick="removePlan(${i})">🗑️</button></div>`).join('');
+  openModal(`<div class="modal-title">${p?'প্রোডাক্ট এডিট':'নতুন প্রোডাক্ট'}</div>
+  <div class="grid-2"><div class="field"><label>নাম</label><input id="f_name" value="${p?.name||''}" /></div><div class="field"><label>আইকন (emoji)</label><input id="f_icon" value="${p?.icon||'🎮'}" /></div></div>
+  <div class="field"><label>📷 প্রোডাক্ট ছবির URL (Photo URL)</label><input id="f_image" value="${p?.image||''}" placeholder="https://example.com/image.jpg" oninput="previewImage()" /><img id="imgPreview" class="preview-img" src="${p?.image||''}" style="${p?.image?'':'display:none'}" onerror="this.style.display='none'" /></div>
+  <div class="field"><label>বর্ণনা</label><textarea id="f_desc" rows="2">${p?.description||''}</textarea></div>
+  <div class="grid-3"><div class="field"><label>পুরোনো দাম</label><input id="f_old" type="number" value="${p?.oldPrice||''}" /></div><div class="field"><label>ক্যাটেগরি</label><select id="f_cat"><option ${p?.category==='NON_ROOT'?'selected':''}>NON_ROOT</option><option ${p?.category==='ROOT'?'selected':''}>ROOT</option><option ${p?.category==='IPHONE'?'selected':''}>IPHONE</option><option ${p?.category==='PC'?'selected':''}>PC</option></select></div><div class="field"><label>স্ট্যাটাস</label><select id="f_status"><option ${p?.status==='ACTIVE'?'selected':''}>ACTIVE</option><option ${p?.status==='INACTIVE'?'selected':''}>INACTIVE</option></select></div></div>
+  <div style="display:flex;gap:14px;margin-bottom:14px"><div style="display:flex;align-items:center;gap:8px"><div class="switch ${p?.antiban?'on':''}" id="f_antiban" onclick="this.classList.toggle('on')"></div><label style="font-size:12px;font-weight:600">100% ANTI BAN</label></div><div style="display:flex;align-items:center;gap:8px"><div class="switch ${p?.maintenance?'on':''}" id="f_maint" onclick="this.classList.toggle('on')"></div><label style="font-size:12px;font-weight:600">MAINTENANCE</label></div></div>
+  <div class="section-card" style="background:var(--card2);padding:14px;margin-bottom:14px"><div class="section-title" style="margin-bottom:10px">📁 FILE & SETUP URLs (ইউজার FILE & SETUP বাটনে দেখাবে)</div><div class="field"><label>📹 PANEL FULL DETAILS (Video URL)</label><input id="f_url_full" value="${p?.url_full_details||''}" placeholder="https://youtube.com/watch?v=..." style="font-family:monospace;font-size:11px" /></div><div class="field"><label>🎬 PANEL SETUP VIDEO URL</label><input id="f_url_setup" value="${p?.url_setup_video||''}" placeholder="https://youtube.com/watch?v=..." style="font-family:monospace;font-size:11px" /></div><div class="field"><label>⬇️ PANEL DOWNLOAD LINK</label><input id="f_url_download" value="${p?.url_download||''}" placeholder="https://mediafire.com/..." style="font-family:monospace;font-size:11px" /></div><div class="field" style="margin-bottom:0"><label>📱 AIMKILL IPHONE SETUP VIDEO URL</label><input id="f_url_iphone" value="${p?.url_iphone_setup||''}" placeholder="https://youtube.com/watch?v=..." style="font-family:monospace;font-size:11px" /></div></div>
+  <div class="section-card" style="background:var(--card2);padding:14px;margin-bottom:14px"><div class="section-title" style="margin-bottom:10px">⏱️ Recharge Plans (দাম ও স্টক)</div><div id="planList">${plansHtml}</div><button class="btn-add-plan" onclick="addPlan()">+ প্ল্যান যোগ করুন</button></div>
+  <button class="btn-primary btn-full" onclick="saveProduct('${id||''}')">সেভ করুন</button>`);
+  window._editPlans=JSON.parse(JSON.stringify(plans));
+}
+function previewImage(){const url=val('f_image');const img=$('imgPreview');if(url){img.src=url;img.style.display='block'}else{img.style.display='none'}}
+function addPlan(){window._editPlans.push({dur:'1 Day',price:0,stock:99});refreshPlanList()}
+function removePlan(i){window._editPlans.splice(i,1);refreshPlanList()}
+function updatePlan(i,k,v){if(window._editPlans[i])window._editPlans[i][k]=k==='dur'?v:Number(v)}
+function refreshPlanList(){$('planList').innerHTML=window._editPlans.map((pl,i)=>`<div class="plan-edit-row"><div><label style="font-size:10px">Duration</label><input value="${pl.dur}" onchange="updatePlan(${i},'dur',this.value)" /></div><div><label style="font-size:10px">Price</label><input type="number" value="${pl.price}" onchange="updatePlan(${i},'price',this.value)" /></div><div><label style="font-size:10px">Stock</label><input type="number" value="${pl.stock}" onchange="updatePlan(${i},'stock',this.value)" /></div><button class="btn-icon btn-icon-danger" onclick="removePlan(${i})">🗑️</button></div>`).join('')}
+function saveProduct(id){const data={name:val('f_name'),icon:val('f_icon'),image:val('f_image'),description:val('f_desc'),oldPrice:val('f_old')?Number(val('f_old')):null,category:val('f_cat'),status:val('f_status'),antiban:$('f_antiban').classList.contains('on'),maintenance:$('f_maint').classList.contains('on'),url_full_details:val('f_url_full'),url_setup_video:val('f_url_setup'),url_download:val('f_url_download'),url_iphone_setup:val('f_url_iphone'),plans:window._editPlans||[]};if(!data.name){toast('নাম আবশ্যক');return}if(id)Object.assign(state.products.find(x=>x.id===id),data);else state.products.push({id:uid(),slug:data.name.toLowerCase().replace(/\s+/g,'-'),...data});save();closeModal();render();toast('সেভ হয়েছে')}
+function delProduct(id){if(!confirm('মুছে ফেলতে চান?'))return;state.products=state.products.filter(p=>p.id!==id);save();render();toast('মুছে ফেলা হয়েছে')}
+
+function adminOrders(){return `<div class="page-title"><span>Orders (${state.orders.length})</span></div>${state.orders.length===0?'<div class="card empty">কোনো অর্ডার নেই</div>':state.orders.slice().reverse().map(o=>{const p=state.products.find(x=>x.id===o.productId);const u=state.users.find(x=>x.id===o.userId);return `<div class="card list-item"><div class="list-icon">${p?.icon||'📦'}</div><div class="list-body"><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span class="list-title">${p?.name||'—'}</span><span class="badge badge-pri">${fmt(o.price)}</span>${o.planDur?`<span class="badge badge-muted">⏱ ${o.planDur}</span>`:''}${o.qty>1?`<span class="badge badge-muted">${o.qty}x</span>`:''}<span class="badge ${o.status==='COMPLETED'?'badge-green':o.status==='PENDING'?'badge-amber':'badge-red'}">${o.status}</span></div><div class="list-sub" style="margin-top:5px">👤 ${u?.username||'—'} (${u?.email||''})<br>⏰ ${tAgo(o.createdAt)}<br>🧾 TxnID: ${o.txnId||'—'}</div>${o.status==='COMPLETED'&&o.codeContent?`<div class="order-code-box">🎫 API Key: ${o.codeContent}</div>`:''}${o.status==='PENDING'?`<div style="margin-top:8px;font-size:11px;color:var(--amber);font-weight:600">⏳ API Key দিয়ে অর্ডার একসেপ্ট করুন</div>`:''}</div>${o.status==='PENDING'?`<div class="actions"><button class="btn-sm btn-primary" onclick="acceptOrder('${o.id}')">✓ একসেপ্ট + API Key</button><button class="btn-sm" style="background:var(--red);color:#fff" onclick="cancelOrder('${o.id}')">✗ বাতিল</button></div>`:''}</div>`}).join('')}`}
+function acceptOrder(id){const o=state.orders.find(x=>x.id===id);if(!o)return;const p=state.products.find(x=>x.id===o.productId);const u=state.users.find(x=>x.id===o.userId);openModal(`<div class="modal-title">✅ অর্ডার একসেপ্ট — API Key দিন</div><div style="background:var(--card2);padding:14px;border-radius:10px;margin-bottom:16px"><div style="font-size:13px;margin-bottom:4px"><strong>প্রোডাক্ট:</strong> ${p?.name||'—'}</div>${o.planDur?`<div style="font-size:13px;margin-bottom:4px"><strong>প্ল্যান:</strong> ${o.planDur}</div>`:''}${o.qty>1?`<div style="font-size:13px;margin-bottom:4px"><strong>পরিমাণ:</strong> ${o.qty}x</div>`:''}<div style="font-size:13px;margin-bottom:4px"><strong>ইউজার:</strong> ${u?.username||'—'}</div><div style="font-size:13px;margin-bottom:4px"><strong>দাম:</strong> ${fmt(o.price)}</div><div style="font-size:13px"><strong>TxnID:</strong> ${o.txnId||'—'}</div></div><div class="field"><label>🎫 API Key / কোড (ইউজারকে দিতে চান)</label><textarea id="orderCode" rows="4" placeholder="এখানে API Key বা কোড লিখুন..." style="font-family:monospace"></textarea></div><div class="info-box" style="margin-bottom:12px">💡 এই API Key ইউজারের My Keys পেজে অটো ডেলিভারি হবে। ইউজার কপি করতে পারবে।</div><div style="display:flex;gap:8px"><button class="btn-sm" style="flex:1;background:var(--card2)" onclick="closeModal()">বাতিল</button><button class="btn-primary btn-sm" style="flex:1" onclick="confirmAccept('${id}')">✅ একসেপ্ট করুন</button></div>`)}
+function confirmAccept(id){const o=state.orders.find(x=>x.id===id);if(!o)return;const code=$('orderCode').value.trim();if(!code){toast('API Key দিন');return}o.status='COMPLETED';o.codeContent=code;const u=state.users.find(x=>x.id===o.userId);if(u){u.totalOrders=(u.totalOrders||0)+1;u.totalSpent=(u.totalSpent||0)+o.price}save();closeModal();render();sendTelegram('✅ <b>অর্ডার একসেপ্ট হয়েছে!</b>\n\n👤 ইউজার: '+(u?.username||'—')+'\n📦 প্রোডাক্ট: '+(state.products.find(x=>x.id===o.productId)?.name||'—')+'\n🎫 API Key: <code>'+code+'</code>\n💰 দাম: '+fmt(o.price));toast('অর্ডার একসেপ্ট হয়েছে! API Key ইউজারকে দেওয়া হয়েছে।')}
+function cancelOrder(id){const o=state.orders.find(x=>x.id===id);if(!o||o.status!=='PENDING')return;o.status='CANCELLED';save();render();toast('অর্ডার বাতিল করা হয়েছে')}
+
+function adminUsers(){return `<div class="page-title"><span>Users (${state.users.length})</span></div>${state.users.length===0?'<div class="card empty">কোনো ইউজার নেই</div>':state.users.map(u=>{const orders=state.orders.filter(o=>o.userId===u.id).length;return `<div class="card list-item"><div class="list-icon" style="border-radius:50%;background:${u.avatarColor};color:#fff;font-weight:800;font-size:13px">${u.username.slice(0,2).toUpperCase()}</div><div class="list-body"><div style="display:flex;gap:8px;align-items:center"><span class="list-title">${u.username}</span>${u.role==='ADMIN'?'👑':''}${u.banned?'🚫':''}</div><div class="list-sub" style="word-break:break-all">${u.email}</div><div class="list-row"><span>অর্ডার: ${orders}</span><span>খরচ: ${fmt(u.totalSpent||0)}</span></div></div><div class="actions"><button class="btn-icon" onclick="userForm('${u.id}')">✏️</button><button class="btn-icon btn-icon-danger" onclick="delUser('${u.id}')">🗑️</button></div></div>`}).join('')}`}
+function userForm(id){const u=state.users.find(x=>x.id===id);openModal(`<div class="modal-title">ইউজার এডিট — ${u.username}</div><div class="grid-2"><div class="field"><label>Total Spent</label><input id="u_spent" type="number" value="${u.totalSpent||0}" /></div><div class="field"><label>Avatar Color</label><input id="u_color" value="${u.avatarColor}" /></div></div><div class="grid-2"><div class="field"><label>Role</label><select id="u_role"><option ${u.role==='USER'?'selected':''}>USER</option><option ${u.role==='ADMIN'?'selected':''}>ADMIN</option></select></div><div class="field"><label>Password</label><input id="u_pass" value="${u.password}" /></div></div><div style="display:flex;justify-content:space-between;align-items:center;padding:13px;background:var(--card2);border-radius:11px;margin-bottom:14px"><div><div style="font-size:14px;font-weight:600">ব্যান করা</div><div style="font-size:11px;color:var(--muted)">ইউজার লগইন করতে পারবে না</div></div><div class="switch ${u.banned?'on':''}" id="u_ban" onclick="this.classList.toggle('on')"></div></div><button class="btn-primary btn-full" onclick="saveUser('${id}')">সেভ করুন</button>`)}
+function saveUser(id){const u=state.users.find(x=>x.id===id);u.totalSpent=Number(val('u_spent'));u.avatarColor=val('u_color');u.role=val('u_role');u.password=val('u_pass');u.banned=$('u_ban').classList.contains('on');save();closeModal();render();toast('সেভ হয়েছে')}
+function delUser(id){if(!confirm('মুছে ফেলতে চান?'))return;state.users=state.users.filter(u=>u.id!==id);save();render();toast('মুছে ফেলা হয়েছে')}
+
+function adminSettings(){const s=state.settings;return `<div class="page-title"><span>⚙️ Settings — সব URL চেঞ্জ করুন</span></div><div class="card section-card"><div class="section-title">🌐 সাইট</div><div class="field"><label>সাইটের নাম</label><input id="s_name" value="${s.site_name}" /></div><div class="field"><label>ট্যাগলাইন</label><input id="s_tag" value="${s.tagline}" /></div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><label style="font-size:13px;font-weight:600">নোটিফিকেশন বার সক্রিয়</label><div class="switch ${s.notif_active?'on':''}" id="s_notif" onclick="this.classList.toggle('on')"></div></div><div class="field"><label>নোটিফিকেশন টেক্সট</label><textarea id="s_notif_txt" rows="2">${s.notification}</textarea></div></div><div class="card section-card"><div class="section-title">🔗 সোশ্যাল লিংক (সব URL এডিট করুন)</div><div class="field"><label>Telegram URL / Channel</label><input id="s_tg" value="${s.telegram}" placeholder="https://t.me/yourchannel" style="font-family:monospace;font-size:12px" /></div><div class="field"><label>YouTube URL / Channel</label><input id="s_yt" value="${s.youtube}" placeholder="https://youtube.com/@yourchannel" style="font-family:monospace;font-size:12px" /></div><div class="field"><label>💬 Help Chat URL (সাহায্য লাগবে? বাটন)</label><input id="s_help" value="${s.help_url||''}" placeholder="https://t.me/yourusername" style="font-family:monospace;font-size:12px" /></div></div><div class="card section-card"><div class="section-title">📲 bKash পেমেন্ট</div><div class="field"><label>bKash Number</label><input id="s_bkash" value="${s.bkash_number||''}" placeholder="01XXXXXXXXX" style="font-family:monospace;font-size:15px;font-weight:700" /></div></div><button class="btn-primary btn-full" style="position:sticky;bottom:8px" onclick="saveSettings()">💾 সব সেটিংস সেভ করুন</button>`}
+function saveSettings(){state.settings=Object.assign({},state.settings,{site_name:val('s_name'),tagline:val('s_tag'),notification:val('s_notif_txt'),notif_active:$('s_notif').classList.contains('on'),telegram:val('s_tg'),youtube:val('s_yt'),help_url:val('s_help'),bkash_number:val('s_bkash')});save();toast('সেটিংস সেভ হয়েছে');render()}
+
+function adminIntegrations(){const s=state.settings;const tgOk=s.tg_bot_token&&s.tg_chat_id;const fbOk=s.fb_api_key&&s.fb_project_id&&s.fb_app_id;const fbStatus=fbConnected?'<span class="fb-status fb-ok">✓ কানেক্টেড</span>':fbOk?'<span class="fb-status fb-no">⚠ কনফিগারড, রিলোড করুন</span>':'<span class="fb-status fb-no">⚠ কনফিগার করুন</span>';return `<div class="page-title"><span>🔌 Integrations</span></div><div class="info-box" style="margin-bottom:14px"><strong>📊 সিস্টেম স্ট্যাটাস:</strong> Firebase: ${fbStatus} • Telegram: ${tgOk?'<span style="color:var(--green)">✓ সক্রিয়</span>':'<span style="color:var(--amber)">⚠ কনফিগার করুন</span>'}</div><div class="card section-card"><div class="section-title">🤖 Telegram Bot ${tgOk?'<span class="fb-status fb-ok">✓ সক্রিয়</span>':'<span class="fb-status fb-no">⚠ কনফিগার করুন</span>'}</div><div class="info-box" style="margin-bottom:14px">নতুন অর্ডার, ডিপোজিট, চ্যাট মেসেজ — সব আপনার Telegram-এ অটো নোটিফিকেশন আসবে।<br><br><strong>সেটআপ:</strong><br>1. Telegram-এ <code>@BotFather</code> খুলুন<br>2. <code>/newbot</code> পাঠান, বট তৈরি করুন<br>3. Bot Token কপি করে নিচে পেস্ট করুন<br>4. আপনার Chat ID জানতে <code>@userinfobot</code> কে মেসেজ করুন</div><div class="field"><label>Bot Token</label><input id="tg_token" value="${s.tg_bot_token||''}" placeholder="123456789:ABCdefGHIjklMNOpqrSTUvwxYZ" style="font-family:monospace;font-size:12px" /></div><div class="field"><label>Your Chat ID</label><input id="tg_chat" value="${s.tg_chat_id||''}" placeholder="123456789" style="font-family:monospace" /></div><button class="btn-sm" style="background:var(--card2);margin-bottom:8px" onclick="testTelegram()">🧪 Test Notification</button></div><div class="card section-card"><div class="section-title">🔥 Firebase Configuration ${fbOk?'<span class="fb-status fb-ok">✓ কনফিগারড</span>':'<span class="fb-status fb-no">⚠ কনফিগার করুন</span>'}</div><div class="info-box" style="margin-bottom:14px">Firebase কনফিগার করলে ডেটা ক্লাউডে সিঙ্ক হবে (একাধিক ডিভাইস থেকে অ্যাক্সেস)।<br><br><strong>কোথা থেকে পাবেন:</strong> Firebase Console → Project Settings → General → Your apps → Web App → SDK setup and configuration → Config কপি করুন।</div><div class="grid-2"><div class="field"><label>apiKey</label><input id="fb_api" value="${s.fb_api_key||''}" placeholder="AIzaSy..." style="font-family:monospace;font-size:11px" /></div><div class="field"><label>authDomain</label><input id="fb_auth" value="${s.fb_auth_domain||''}" placeholder="xxx.firebaseapp.com" style="font-family:monospace;font-size:11px" /></div><div class="field"><label>projectId</label><input id="fb_proj" value="${s.fb_project_id||''}" placeholder="your-project-id" style="font-family:monospace;font-size:11px" /></div><div class="field"><label>databaseURL</label><input id="fb_db" value="${s.fb_database_url||''}" placeholder="https://xxx.firebaseio.com" style="font-family:monospace;font-size:11px" /></div><div class="field"><label>storageBucket</label><input id="fb_sb" value="${s.fb_storage_bucket||''}" placeholder="xxx.appspot.com" style="font-family:monospace;font-size:11px" /></div><div class="field"><label>messagingSenderId</label><input id="fb_ms" value="${s.fb_messaging_sender_id||''}" placeholder="1234567890" style="font-family:monospace;font-size:11px" /></div></div><div class="field"><label>appId</label><input id="fb_app" value="${s.fb_app_id||''}" placeholder="1:1234:web:abcd" style="font-family:monospace;font-size:11px" /></div><div class="info-box" style="margin-top:8px"><strong>📋 পূর্ণ firebaseConfig উদাহরণ:</strong><br><code style="display:block;margin-top:6px;font-size:10px;white-space:pre-line">apiKey: "AIzaSy..."
+authDomain: "project.firebaseapp.com"
+projectId: "project-id"
+databaseURL: "https://project.firebaseio.com"
+storageBucket: "project.appspot.com"
+messagingSenderId: "1234567890"
+appId: "1:1234:web:abcd1234"</code></div></div><button class="btn-primary btn-full" style="position:sticky;bottom:8px" onclick="saveIntegrations()">💾 Integrations সেভ করুন</button>`}
+function saveIntegrations(){state.settings=Object.assign({},state.settings,{tg_bot_token:val('tg_token'),tg_chat_id:val('tg_chat'),fb_api_key:val('fb_api'),fb_auth_domain:val('fb_auth'),fb_project_id:val('fb_proj'),fb_database_url:val('fb_db'),fb_storage_bucket:val('fb_sb'),fb_messaging_sender_id:val('fb_ms'),fb_app_id:val('fb_app')});save();toast('Integrations সেভ হয়েছে');fbConnected=false;setTimeout(function(){if(initFirebase()){toast('🔥 Firebase কানেক্টেড!');fbSync('products',state.products);fbSync('orders',state.orders);fbSync('users',state.users);fbSync('settings',[state.settings])}else{toast('⚠ Firebase কনফিগ সম্পূর্ণ নয়')}},500);render()}
+function testTelegram(){const token=val('tg_token');const chat=val('tg_chat');if(!token||!chat){toast('Token ও Chat ID দিন');return}fetch('https://api.telegram.org/bot'+token+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:chat,text:'✅ Test from Panel Bajar Admin!',parse_mode:'HTML'})}).then(r=>r.json()).then(d=>{if(d.ok)toast('✅ Test সফল! Telegram চেক করুন');else toast('❌ ব্যর্থ: '+(d.description||''))}).catch(()=>toast('❌ নেটওয়ার্ক সমস্যা'))}
+
+function exportData(){const data={users:state.users,products:state.products,orders:state.orders,settings:state.settings};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='panel-bajar-backup.json';a.click();toast('ব্যাকআপ ডাউনলোড হয়েছে')}
+function resetAll(){if(!confirm('সব ডেটা মুছে ফেলবেন? ফেরানো যাবে না!'))return;localStorage.clear();location.reload()}
+
+setInterval(function(){state.orders=JSON.parse(localStorage.getItem('pb_orders')||'[]');state.users=JSON.parse(localStorage.getItem('pb_users')||'[]');state.settings=JSON.parse(localStorage.getItem('pb_settings')||JSON.stringify(state.settings));updateBadge();if(['dashboard','orders'].includes(state.tab))render()},2500);
+
+function seed(){if(state.users.length>0||state.products.length>0)return;state.users.push({id:uid(),email:'admin@panelbajar.com',username:'admin',password:'admin123',role:'ADMIN',totalOrders:0,totalSpent:0,banned:false,avatarColor:'#7c3aed',createdAt:new Date().toISOString()});state.users.push({id:uid(),email:'saimon@example.com',username:'saimon',password:'user123',role:'USER',totalOrders:0,totalSpent:0,banned:false,avatarColor:'#ec4899',createdAt:new Date().toISOString()});const samples=[{name:'AIM HACK - ANDROID - IOS',icon:'🎯',category:'NON_ROOT',antiban:true,image:'',description:'100% Anti Ban • Auto Aim • Android & iOS',plans:[{dur:'1 Hour',price:15,stock:99},{dur:'3 Hours',price:40,stock:0},{dur:'6 Hours',price:80,stock:0},{dur:'12 Hours',price:120,stock:99},{dur:'1 Day',price:160,stock:99},{dur:'3 Days',price:300,stock:0},{dur:'7 Days',price:600,stock:0},{dur:'30 Days',price:1200,stock:0}]},{name:'BALA MODS - NON ROOT',icon:'🔥',category:'NON_ROOT',antiban:true,image:'',description:'Main ID Safe • Anti Ban • Non Root',plans:[{dur:'1 Day',price:25,stock:99},{dur:'7 Days',price:150,stock:99},{dur:'30 Days',price:500,stock:99}]},{name:'AIM HACK - ROOT',icon:'🎯',category:'ROOT',antiban:true,image:'',description:'Root Version • Premium Features',plans:[{dur:'1 Day',price:30,stock:99},{dur:'7 Days',price:180,stock:99}]},{name:'IPHONE MOD',icon:'📱',category:'IPHONE',antiban:true,image:'',description:'iOS Only • No Jailbreak',plans:[{dur:'1 Day',price:50,stock:99},{dur:'7 Days',price:300,stock:99}]},{name:'PC ESP HACK',icon:'💻',category:'PC',antiban:true,image:'',description:'PC Version • ESP • Aim • Wallhack',plans:[{dur:'1 Day',price:40,stock:99},{dur:'7 Days',price:250,stock:99}]}];samples.forEach(s=>state.products.push({id:uid(),slug:s.name.toLowerCase().replace(/\s+/g,'-'),...s,status:'ACTIVE',url_full_details:'',url_setup_video:'',url_download:'',url_iphone_setup:''}));save()}
+seed();render();
+// Firebase init ও real-time sync
+setTimeout(function(){
+  if(initFirebase()){
+    console.log('🔥 Firebase সিঙ্ক চালু — ইউজার প্যানেল থেকে অর্ডার এলে অটো দেখাবে');
+    fbListen('orders',function(data){if(data){state.orders=data;localStorage.setItem('pb_orders',JSON.stringify(data));updateBadge();if(['dashboard','orders'].includes(state.tab))render()}});
+    fbListen('users',function(data){if(data){state.users=data;localStorage.setItem('pb_users',JSON.stringify(data));if(['dashboard','users'].includes(state.tab))render()}});
+    // Initial লোড
+    fbLoad('orders',function(d){if(d){state.orders=d;localStorage.setItem('pb_orders',JSON.stringify(d));render()}});
+  }else{
+    console.log('⚠ Firebase কনফিগার করা নেই — অফলাইন মোডে চলছে');
+  }
+},1500);
+</script>
+</body>
+</html>

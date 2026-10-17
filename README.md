@@ -164,12 +164,12 @@ main{flex:1;padding:18px;overflow-y:auto;max-width:900px}
 
 <script>
 var FIREBASE_CONFIG={
-  apiKey:            "AIzaSyC4rtb4f8GP4i2WCyB8T_rqnmkUPNhKs_Q",
-  authDomain:        "farmer-73a44.firebaseapp.com",
-  projectId:         "farmer-73a44",
-  storageBucket:     "farmer-73a44.firebasestorage.app",
+  apiKey: "AIzaSyC4rtb4f8GP4i2WCyB8T_rqnmkUPNhKs_Q",
+  authDomain: "farmer-73a44.firebaseapp.com",
+  projectId: "farmer-73a44",
+  storageBucket: "farmer-73a44.firebasestorage.app",
   messagingSenderId: "919992492785",
-  appId:             "1:919992492785:web:49a831f26c58afcd95ff50",
+  appId: "1:919992492785:web:49a831f26c58afcd95ff50",
   databaseURL:       ""
 };
 var TELEGRAM_CONFIG={ botToken: "", chatId: "" };

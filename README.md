@@ -172,7 +172,7 @@ var FIREBASE_CONFIG={
   appId: "1:374641641780:web:c87d374edf2371dae47d61",
   databaseURL:       ""
 };
-var TELEGRAM_CONFIG={ botToken: "8886507238:AAEW429taQKomorvb1mD2PhnZD3exlOPmyc", chatId: "7427334644" };
+var TELEGRAM_CONFIG={ botToken: "8842406650:AAESk-VLFq7qwOT2i14SuRAqWDIhNkQ7GNc", chatId: "7427334644" };
 </script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
